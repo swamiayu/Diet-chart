@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ayurvedic Diet Planner</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2300695c'/><text x='50' y='72' font-size='62' text-anchor='middle' fill='white' font-family='sans-serif'>आ</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="landing">
+  <header class="lp-nav">
+    <div class="brand">
+      <div class="logo">आ</div>
+      <strong>Ayurvedic Diet Planner</strong>
+    </div>
+    <a class="btn primary sm" id="navCta" href="/login">Sign in</a>
+  </header>
+
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">पथ्य · अपथ्य · अल्प-मात्रा</p>
+      <h1>Personalised Ayurvedic diet charts, in your patient's language.</h1>
+      <p class="sub">Classify foods into <b>Pathya</b>, <b>Apathya</b> and <b>Alpa-matra</b>,
+        show them in Marathi, Hindi or Gujarati, and hand your patient a clean,
+        colour-coded PDF — in seconds.</p>
+      <div class="hero-cta">
+        <a class="btn primary lg" id="heroCta" href="/login">Get started with Google</a>
+        <a class="btn ghost lg" href="#how">How it works</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="legend-card">
+        <div class="lc-row g"><span class="d"></span> पथ्य — recommended</div>
+        <div class="lc-row a"><span class="d"></span> अल्प-मात्रा — small quantity</div>
+        <div class="lc-row r"><span class="d"></span> अपथ्य — to avoid</div>
+      </div>
+      <div class="chip-demo">
+        <span class="cd g">तांदूळ</span><span class="cd g">मूग</span>
+        <span class="cd a">तूप</span><span class="cd r">दही</span><span class="cd r">केळे</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="how">
+    <div class="feature">
+      <div class="f-ico">🍃</div>
+      <h3>Three-state classification</h3>
+      <p>Tap a food to cycle Pathya → Alpa-matra → Apathya. The rest stay recommended.</p>
+    </div>
+    <div class="feature">
+      <div class="f-ico">🌐</div>
+      <h3>Accurate translations</h3>
+      <p>Auto-translate to मराठी / हिन्दी / ગુજરાતી, then edit any term — stored in your account.</p>
+    </div>
+    <div class="feature">
+      <div class="f-ico">📄</div>
+      <h3>Patient-ready PDF</h3>
+      <p>Download a neatly formatted, colour-coded chart with the correct regional script.</p>
+    </div>
+    <div class="feature">
+      <div class="f-ico">🔒</div>
+      <h3>Private to you</h3>
+      <p>Sign in with Google. Your saved patient plans are visible only to you.</p>
+    </div>
+  </section>
+
+  <footer class="lp-foot">
+    <span>© Ayurvedic Diet Planner</span>
+    <a class="btn primary sm" href="/login">Sign in with Google</a>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script>
+    // If already signed in, point CTAs at the app instead of login.
+    if (window.Auth && Auth.token()) {
+      for (const id of ["navCta", "heroCta"]) {
+        const a = document.getElementById(id);
+        if (a) { a.href = "/app"; a.textContent = id === "navCta" ? "Open app" : "Go to your planner"; }
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ayurvedic Diet Planner</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2300695c'/><text x='50' y='72' font-size='62' text-anchor='middle' fill='white' font-family='sans-serif'>आ</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">आ</div>
+      <div>
+        <h1>Ayurvedic Diet Planner</h1>
+        <p class="tag">पथ्य · अपथ्य · अल्प-मात्रा</p>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="lang-switch" id="langSwitch" role="tablist" aria-label="Language"></div>
+      <a class="navlink" href="/plans">📋 Saved plans</a>
+      <div class="user-chip" id="userChip"></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT: patient + actions -->
+    <aside class="panel sidebar">
+      <h2 class="panel-title">Patient & Plan</h2>
+      <form id="patientForm" class="form">
+        <label>Patient name<span class="req">*</span>
+          <input name="name" required placeholder="e.g. Ramesh Patil" />
+        </label>
+        <div class="row">
+          <label>Age<input name="age" type="number" min="0" max="120" placeholder="45" /></label>
+          <label>Gender
+            <select name="gender">
+              <option value="">—</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+        </div>
+        <label>Prakriti (constitution)
+          <input name="prakriti" placeholder="Vata / Pitta / Kapha" />
+        </label>
+        <label>Diagnosis
+          <input name="diagnosis" placeholder="e.g. Amlapitta (acidity)" />
+        </label>
+        <div class="row">
+          <label>Doctor<input name="doctorName" placeholder="Dr. Kale" /></label>
+          <label>Clinic<input name="clinicName" placeholder="Arogya Ayurveda" /></label>
+        </div>
+        <label>Additional advice (this patient)
+          <textarea name="generalAdvice" rows="2" placeholder="Anything specific to this patient…"></textarea>
+        </label>
+        <p class="hint" id="stdAdviceHint" hidden>Your standard advice is always printed; this is added below it.</p>
+      </form>
+
+      <div class="counts" id="counts">
+        <span class="count pathya"><b id="cPathya">0</b> Pathya</span>
+        <span class="count alpamatra"><b id="cAlpa">0</b> Alpa-matra</span>
+        <span class="count apathya"><b id="cApathya">0</b> Apathya</span>
+      </div>
+
+      <div class="actions">
+        <button id="btnPdf" class="btn primary" type="button">⬇ Download PDF</button>
+        <button id="btnSave" class="btn ghost" type="button">Save plan</button>
+      </div>
+      <p class="hint" id="status"></p>
+    </aside>
+
+    <!-- RIGHT: food selection -->
+    <section class="panel content">
+      <div class="content-head">
+        <h2 class="panel-title">Food items</h2>
+        <div class="tools">
+          <input id="search" class="search" type="search" placeholder="Search food…" />
+          <select id="catFilter" class="search"></select>
+          <button id="btnAdd" class="btn-add" type="button">＋ Add</button>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><i class="dot g"></i> Pathya — recommended (default)</span>
+        <span><i class="dot a"></i> Alpa-matra — click once (•)</span>
+        <span><i class="dot r"></i> Apathya — click twice (✕)</span>
+      </div>
+      <p class="hint">Tap a food to cycle: <b>Pathya → Alpa-matra → Apathya → Pathya</b>.</p>
+
+      <div id="foodArea" class="food-area"><p class="hint">Loading foods…</p></div>
+    </section>
+  </main>
+
+  <!-- Add food / category modal -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card">
+      <button class="modal-x" id="modalClose" aria-label="Close">×</button>
+      <h3>Add to master list</h3>
+
+      <form id="addFoodForm" class="form">
+        <h4>＋ Food item</h4>
+        <label>Name (English)<span class="req">*</span>
+          <input name="name" required placeholder="e.g. Idli" />
+        </label>
+        <label>Category<span class="req">*</span>
+          <select id="addFoodCat" required></select>
+        </label>
+        <label id="newCatWrap" hidden>New category name<span class="req">*</span>
+          <input id="addFoodNewCat" placeholder="e.g. Sprouts" />
+        </label>
+
+        <div class="tl-block">
+          <div class="tl-head">
+            <span>Translations</span>
+            <button type="button" class="btn-translate" id="foodTranslateBtn">🌐 Translate</button>
+          </div>
+          <div class="tl-fields" id="foodTl">
+            <label>मराठी<input data-lang="mr" placeholder="Marathi" /></label>
+            <label>हिन्दी<input data-lang="hi" placeholder="Hindi" /></label>
+            <label>ગુજરાતી<input data-lang="gu" placeholder="Gujarati" /></label>
+          </div>
+          <p class="tl-hint">Click Translate to auto-fill, then correct anything wrong before saving.</p>
+        </div>
+
+        <button class="btn primary" type="submit">Add food</button>
+      </form>
+
+      <div class="divider"></div>
+
+      <form id="addCatForm" class="form">
+        <h4>＋ Category only</h4>
+        <label>Name (English)<span class="req">*</span>
+          <input name="name" required placeholder="e.g. Sprouts" />
+        </label>
+
+        <div class="tl-block">
+          <div class="tl-head">
+            <span>Translations</span>
+            <button type="button" class="btn-translate" id="catTranslateBtn">🌐 Translate</button>
+          </div>
+          <div class="tl-fields" id="catTl">
+            <label>मराठी<input data-lang="mr" placeholder="Marathi" /></label>
+            <label>हिन्दी<input data-lang="hi" placeholder="Hindi" /></label>
+            <label>ગુજરાતી<input data-lang="gu" placeholder="Gujarati" /></label>
+          </div>
+        </div>
+
+        <button class="btn ghost" type="submit">Add category</button>
+      </form>
+
+      <p class="hint">Translations are saved in the database and shown on the site &amp; PDF.
+        They can be edited anytime — no code change or redeploy needed.</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

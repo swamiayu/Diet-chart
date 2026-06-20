@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(tail -8 \"C:\\\\Users\\\\bhang\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-bhang-Desktop-Diet-chart\\\\18a444ab-c1d6-4370-adb5-47fd15bddec7\\\\tasks\\\\b9nyakb7p.output\")",
+      "Bash(ls node_modules/mongoose node_modules/axios node_modules/express -d)",
+      "Bash(node utils/test-glossary.js)",
+      "Bash(node utils/test-pdf.mjs)",
+      "Bash(grep -oE '^[A-Z_]+=' .env)",
+      "Bash(grep -q '^\\\\.env$' .gitignore)",
+      "Read(//c/Users/bhang/.claude/projects/c--Users-bhang-Desktop-Diet-chart/memory/**)",
+      "Bash(node -e ' *)",
+      "Bash(npm run *)",
+      "Bash(cp /tmp/ui-test.mjs ./ui-test.mjs)",
+      "Bash(sed -i 's#/tmp/ui-mr.png#ui-mr.png#; s#/tmp/ui-gu.png#ui-gu.png#' ui-test.mjs)",
+      "Bash(node ui-test.mjs)",
+      "Bash(curl -s -o /dev/null -w \"favicon.ico -> %{http_code}\\\\n\" http://localhost:5000/favicon.ico)",
+      "Bash(curl -s -X POST http://localhost:5000/api/diet-plans/preview-pdf -H 'Content-Type: application/json' -d '{\"patient\":{\"name\":\"Ramesh Patil\",\"age\":45},\"language\":\"mr\",\"clinicName\":\"Arogya Ayurveda\",\"items\":[{\"name\":\"दही\",\"category\":\"दुग्धजन्य पदार्थ\",\"classification\":\"apathya\"},{\"name\":\"तांदूळ\",\"category\":\"धान्य\",\"classification\":\"pathya\"},{\"name\":\"तूप\",\"category\":\"दुग्धजन्य पदार्थ\",\"classification\":\"alpamatra\"}]}' -o mr.pdf -w 'mr.pdf bytes: %{size_download}\\\\n')",
+      "Bash(curl -s -X POST http://localhost:5000/api/diet-plans/preview-pdf -H 'Content-Type: application/json' -d '{\"patient\":{\"name\":\"Test\",\"age\":40},\"language\":\"gu\",\"items\":[{\"name\":\"દહીં\",\"category\":\"ડેરી\",\"classification\":\"pathya\"}]}' -o gu.pdf -w 'gu.pdf bytes: %{size_download}\\\\n')",
+      "Read(//tmp/**)",
+      "Bash(tasklist)",
+      "Bash(rm -f t.mjs t2.mjs t3.mjs t4.mjs server-like.html mr.pdf gu.pdf en.pdf ui-test.mjs ui-mr.png ui-gu.png)",
+      "Bash(npm uninstall *)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(node shot.mjs)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\bhang\\.claude\\projects\\c--Users-bhang-Desktop-Diet-chart\\memory"
+    ]
+  }
+}

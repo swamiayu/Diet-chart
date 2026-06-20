@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+
+# Environment variables (keep .env.example committed)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output/
+
+# Caches
+.cache/
+.eslintcache
+
+# Temp / runtime
+tmp/
+temp/
+*.tmp
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3

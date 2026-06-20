@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Saved plans · Ayurvedic Diet Planner</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2300695c'/><text x='50' y='72' font-size='62' text-anchor='middle' fill='white' font-family='sans-serif'>आ</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand brand-link" href="/app" title="Back to planner">
+      <div class="logo">आ</div>
+      <div>
+        <h1>Saved plans</h1>
+        <p class="tag">Your patients' diet charts</p>
+      </div>
+    </a>
+    <div class="top-right">
+      <a class="navlink" href="/app">← Back to planner</a>
+      <a class="navlink" href="/app">＋ New plan</a>
+      <div class="user-chip" id="userChip"></div>
+    </div>
+  </header>
+
+  <main class="plans-wrap">
+    <div class="plans-head">
+      <input id="search" class="search" type="search" placeholder="Search patient or diagnosis…" />
+      <span class="muted" id="planCount"></span>
+    </div>
+    <div id="plansList" class="plans-grid"><p class="hint">Loading…</p></div>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="auth.js"></script>
+  <script src="plans.js"></script>
+</body>
+</html>
