@@ -1,12 +1,14 @@
 // ---- State ----
 const state = {
   lang: "mr",
+  languages: [],             // [{code, native, label}]
   foods: [],                 // [{_id, name, category, name_en, category_en, categoryId}]
   categories: [],            // [{_id, name_en, name, foodCount}]
   cls: new Map(),            // foodId -> 'pathya' | 'alpamatra' | 'apathya'
   search: "",
   cat: "",                   // category_en filter ("" = all)
 };
+const nativeName = (code) => (state.languages.find((l) => l.code === code) || {}).native || code;
 const CYCLE = { pathya: "alpamatra", alpamatra: "apathya", apathya: "pathya" };
 const MARK = { pathya: "✓", alpamatra: "•", apathya: "✕" };
 
@@ -24,6 +26,7 @@ function toast(msg, kind = "") {
 // ---- Languages ----
 async function loadLanguages() {
   const { languages } = await api("/api/languages").then((r) => r.json());
+  state.languages = languages || [];
   const wrap = $("#langSwitch");
   wrap.innerHTML = "";
   languages.forEach((l) => {
@@ -42,8 +45,42 @@ async function switchLang(code) {
   document.querySelectorAll("#langSwitch button").forEach((b) =>
     b.classList.toggle("active", b.dataset.code === code)
   );
+  updateAdviceLangUI(true); // language changed -> clear stale translation
   await loadCategories();
   await loadFoods(); // classification map is preserved (keyed by id)
+}
+
+// Show/hide and label the additional-advice translation field for the current
+// language (hidden for English, since the English field prints directly).
+function updateAdviceLangUI(clear) {
+  const block = $("#addAdviceTl");
+  const label = $("#addAdviceLangLabel");
+  const field = $("#addAdviceTrField");
+  if (!block) return;
+  const isEn = state.lang === "en";
+  block.hidden = isEn;
+  if (label) label.textContent = "Translated · " + nativeName(state.lang);
+  if (field) {
+    field.dataset.lang = state.lang;
+    field.placeholder = `Translated advice in ${nativeName(state.lang)}…`;
+    if (clear) field.value = "";
+  }
+}
+
+async function translateAdditionalAdvice(btn) {
+  const src = $("#patientForm [name=generalAdvice]").value.trim();
+  if (!src) { toast("Type the additional advice first", "err"); return; }
+  if (state.lang === "en") return;
+  const data = await api("/api/translate", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: src, lang: state.lang }),
+  }).then((r) => r.json()).catch(() => null);
+  if (data?.translated) {
+    $("#addAdviceTrField").value = data.translated;
+    toast("Translated — edit if needed", "ok");
+  } else {
+    toast("Translation failed", "err");
+  }
 }
 
 // ---- Categories ----
@@ -147,12 +184,16 @@ function patientPayload() {
     foodItemId: f._id,
     classification: state.cls.get(f._id) || "pathya",
   }));
+  // Reviewed translation of the additional advice for the chosen language.
+  const addTr = ($("#addAdviceTrField")?.value || "").trim();
+  const generalAdviceTr = state.lang !== "en" && addTr ? { [state.lang]: addTr } : undefined;
   return {
     patient: { name: get("name"), age: get("age") ? Number(get("age")) : undefined, gender: get("gender"), prakriti: get("prakriti") },
     doctorName: get("doctorName"),
     clinicName: get("clinicName"),
     diagnosis: get("diagnosis"),
     generalAdvice: get("generalAdvice"),
+    generalAdviceTr,
     language: state.lang,
     items,
   };
@@ -311,6 +352,7 @@ $("#catTranslateBtn").addEventListener("click", (e) =>
 );
 $("#addFoodForm").addEventListener("submit", addFood);
 $("#addCatForm").addEventListener("submit", addCategory);
+$("#addAdviceTranslateBtn").addEventListener("click", (e) => translateAdditionalAdvice(e.currentTarget));
 
 (async function init() {
   // Gate the page: must be signed in.
@@ -336,6 +378,7 @@ $("#addCatForm").addEventListener("submit", addCategory);
 
   try {
     await loadLanguages();
+    updateAdviceLangUI(false); // label/show the advice-translation field for the current language
     await loadCategories();
     await loadFoods();
   } catch (e) {

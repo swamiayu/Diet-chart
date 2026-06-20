@@ -45,9 +45,11 @@ const dietPlanSchema = new mongoose.Schema(
     language: { type: String, default: "mr" },
     items: { type: [planItemSchema], default: [] },
     // Snapshot of the doctor's standard advice at save time (always printed).
-    defaultAdvice: { type: String, default: "" },
+    defaultAdvice: { type: String, default: "" }, // English
+    defaultAdviceTr: { type: Map, of: String, default: {} }, // reviewed mr/hi/gu
     // Per-plan extra advice typed on the planner (printed in addition).
-    generalAdvice: { type: String, default: "" },
+    generalAdvice: { type: String, default: "" }, // English
+    generalAdviceTr: { type: Map, of: String, default: {} }, // reviewed mr/hi/gu
     date: { type: Date, default: Date.now },
   },
   { timestamps: true }

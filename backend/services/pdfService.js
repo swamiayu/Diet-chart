@@ -2,7 +2,7 @@ import puppeteer from "puppeteer";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { SUPPORTED_LANGUAGES } from "../data/languages.js";
+import { SUPPORTED_LANGUAGES, SOURCE_LANG } from "../data/languages.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FONT_DIR = join(__dirname, "..", "assets", "fonts");
@@ -127,9 +127,18 @@ export function buildDietPlanHtml(plan, rows, lang) {
     .map((k) => buildSectionHtml(k, rows, lang))
     .join("");
 
-  // Advice block: the doctor's standard advice (always) + per-plan extra advice.
+  // Advice block: standard advice (always) + per-plan extra advice, each shown in
+  // the selected language using the doctor's reviewed translation, falling back
+  // to the English source when no translation exists for that language.
   const nl2br = (s) => esc(s).replace(/\r?\n/g, "<br>");
-  const adviceParts = [plan.defaultAdvice, plan.generalAdvice]
+  const trGet = (tr, l) => {
+    if (!tr || l === SOURCE_LANG) return "";
+    return (typeof tr.get === "function" ? tr.get(l) : tr[l]) || "";
+  };
+  const adviceParts = [
+    trGet(plan.defaultAdviceTr, lang) || plan.defaultAdvice,
+    trGet(plan.generalAdviceTr, lang) || plan.generalAdvice,
+  ]
     .map((a) => (a || "").trim())
     .filter(Boolean);
   const adviceHtml = adviceParts.length

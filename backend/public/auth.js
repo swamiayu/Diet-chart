@@ -87,9 +87,18 @@
           "<label>Clinic / Hospital name" +
           '<input name="clinicName" placeholder="e.g. Arogya Ayurveda" maxlength="120" /></label>' +
           '<p class="hint">Appears as the header on your printed diet-chart PDFs.</p>' +
-          "<label>Standard advice (printed on every plan)" +
+          "<label>Standard advice — English (printed on every plan)" +
           '<textarea name="defaultAdvice" rows="3" maxlength="1000" placeholder="e.g. Drink warm water. Avoid curd at night. Eat at regular times."></textarea></label>' +
-          '<p class="hint">Always printed under “General Advice”. Any extra advice you type on the planner is added below it.</p>' +
+          '<div class="tl-block">' +
+          '<div class="tl-head"><span>Advice translations</span>' +
+          '<button type="button" class="btn-translate" id="advTranslateBtn">🌐 Translate</button></div>' +
+          '<div class="tl-fields" id="advTl">' +
+          "<label>मराठी<textarea data-lang=\"mr\" rows=\"2\"></textarea></label>" +
+          "<label>हिन्दी<textarea data-lang=\"hi\" rows=\"2\"></textarea></label>" +
+          "<label>ગુજરાતી<textarea data-lang=\"gu\" rows=\"2\"></textarea></label>" +
+          "</div>" +
+          '<p class="tl-hint">Translate fills these from the English above; fix anything wrong. The selected language’s version is printed (English if blank).</p>' +
+          "</div>" +
           '<p class="pf-msg" hidden></p>' +
           '<div class="actions">' +
           '<button class="btn primary" type="submit">Save</button>' +
@@ -101,6 +110,9 @@
         m.querySelector("#pfCancel").onclick = close;
         m.addEventListener("click", (e) => { if (e.target.id === "profileModal") close(); });
         m.querySelector("#profileForm").addEventListener("submit", saveProfile);
+        m.querySelector("#advTranslateBtn").addEventListener("click", (e) =>
+          Auth.translateInto(m.querySelector("[name=defaultAdvice]").value.trim(), "#advTl", e.currentTarget)
+        );
       }
       const d = Auth.doctor() || {};
       const pic = m.querySelector(".pf-pic");
@@ -110,9 +122,37 @@
       m.querySelector(".pf-email").textContent = d.email || "";
       m.querySelector("#profileForm [name=clinicName]").value = d.clinicName || "";
       m.querySelector("#profileForm [name=defaultAdvice]").value = d.defaultAdvice || "";
+      const tr = d.defaultAdviceTr || {};
+      m.querySelectorAll("#advTl [data-lang]").forEach((t) => { t.value = tr[t.dataset.lang] || ""; });
       const msg = m.querySelector(".pf-msg");
       msg.hidden = true; msg.textContent = "";
       m.hidden = false;
+    },
+
+    // Translate `srcText` (English) into all target languages, filling the
+    // textareas/inputs marked with [data-lang] inside `containerSel`. Shared by
+    // the profile (standard advice) and the planner (additional advice).
+    async translateInto(srcText, containerSel, btn) {
+      if (!srcText) { return; }
+      const fields = [...document.querySelectorAll(`${containerSel} [data-lang]`)];
+      const langs = fields.map((f) => f.dataset.lang);
+      const old = btn.textContent; btn.disabled = true; btn.textContent = "Translating…";
+      try {
+        const results = await Promise.all(
+          langs.map((l) =>
+            fetch("/api/translate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: srcText, lang: l }),
+            }).then((r) => r.json())
+          )
+        );
+        fields.forEach((f, i) => { if (results[i]?.translated) f.value = results[i].translated; });
+      } catch (_) {
+        /* leave fields as-is on failure */
+      } finally {
+        btn.disabled = false; btn.textContent = old;
+      }
     },
   };
 
@@ -125,10 +165,15 @@
     try {
       const clinicName = m.querySelector("[name=clinicName]").value.trim();
       const defaultAdvice = m.querySelector("[name=defaultAdvice]").value.trim();
+      const defaultAdviceTr = {};
+      m.querySelectorAll("#advTl [data-lang]").forEach((t) => {
+        const v = t.value.trim();
+        if (v) defaultAdviceTr[t.dataset.lang] = v;
+      });
       const res = await Auth.fetch("/api/auth/me", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clinicName, defaultAdvice }),
+        body: JSON.stringify({ clinicName, defaultAdvice, defaultAdviceTr }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not save");

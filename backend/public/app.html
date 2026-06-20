@@ -55,9 +55,17 @@
           <label>Doctor<input name="doctorName" placeholder="Dr. Kale" /></label>
           <label>Clinic<input name="clinicName" placeholder="Arogya Ayurveda" /></label>
         </div>
-        <label>Additional advice (this patient)
+        <label>Additional advice — English (this patient)
           <textarea name="generalAdvice" rows="2" placeholder="Anything specific to this patient…"></textarea>
         </label>
+        <div class="tl-block" id="addAdviceTl" hidden>
+          <div class="tl-head">
+            <span id="addAdviceLangLabel">Translated</span>
+            <button type="button" class="btn-translate" id="addAdviceTranslateBtn">🌐 Translate</button>
+          </div>
+          <textarea id="addAdviceTrField" rows="2" placeholder="Translated advice for the selected language…"></textarea>
+          <p class="tl-hint">Printed in the selected language; edit if the translation is off. Left blank → English is printed.</p>
+        </div>
         <p class="hint" id="stdAdviceHint" hidden>Your standard advice is always printed; this is added below it.</p>
       </form>
 

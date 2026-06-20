@@ -2,7 +2,7 @@ import { DietPlan, CLASSIFICATIONS } from "../models/DietPlan.js";
 import { FoodItem } from "../models/FoodItem.js";
 import { translateFoodItem, translateText } from "../services/translationService.js";
 import { buildDietPlanHtml, generatePdfBuffer } from "../services/pdfService.js";
-import { SOURCE_LANG } from "../data/languages.js";
+import { SOURCE_LANG, sanitizeTranslations } from "../data/languages.js";
 
 // Accepts either:
 //   items:      [{ foodItemId|name, category?, classification, note? }]
@@ -70,9 +70,12 @@ export async function createPlan(req, res, next) {
       clinicName: clinicName || req.doctor.clinicName,
       diagnosis,
       language: language || "mr",
-      // Snapshot the doctor's standard advice; per-plan extra advice on top.
+      // Snapshot the doctor's standard advice (+ reviewed translations); per-plan
+      // extra advice (+ its reviewed translation for the chosen language) on top.
       defaultAdvice: req.doctor.defaultAdvice || "",
+      defaultAdviceTr: req.doctor.defaultAdviceTr ? Object.fromEntries(req.doctor.defaultAdviceTr) : {},
       generalAdvice,
+      generalAdviceTr: sanitizeTranslations(req.body.generalAdviceTr),
       items,
       date: date || Date.now(),
     });
@@ -169,9 +172,11 @@ export async function previewPdf(req, res, next) {
       doctorName: req.body.doctorName || req.doctor.name,
       clinicName: req.body.clinicName || req.doctor.clinicName,
       diagnosis: req.body.diagnosis,
-      // Standard advice (always) + per-plan extra advice, just like a saved plan.
+      // Standard advice (always) + per-plan extra advice, with reviewed translations.
       defaultAdvice: req.doctor.defaultAdvice || "",
+      defaultAdviceTr: req.doctor.defaultAdviceTr ? Object.fromEntries(req.doctor.defaultAdviceTr) : {},
       generalAdvice: req.body.generalAdvice,
+      generalAdviceTr: sanitizeTranslations(req.body.generalAdviceTr),
       date: req.body.date || Date.now(),
       items,
     };

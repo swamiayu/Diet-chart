@@ -11,7 +11,9 @@ const doctorSchema = new mongoose.Schema(
     clinicName: { type: String, default: "" }, // optional default for new plans
     // Standard advice that prints on EVERY plan (e.g. "Drink warm water, avoid
     // curd at night"). Per-plan additional advice is appended on top of this.
-    defaultAdvice: { type: String, default: "" },
+    defaultAdvice: { type: String, default: "" }, // English source
+    // Doctor-reviewed translations of defaultAdvice, keyed by lang (mr/hi/gu).
+    defaultAdviceTr: { type: Map, of: String, default: {} },
     lastLoginAt: { type: Date, default: Date.now },
   },
   { timestamps: true }

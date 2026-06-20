@@ -1,4 +1,5 @@
 import { Doctor } from "../models/Doctor.js";
+import { sanitizeTranslations } from "../data/languages.js";
 import {
   verifyGoogleIdToken,
   issueSessionToken,
@@ -64,6 +65,9 @@ export async function updateProfile(req, res, next) {
     if (req.body.defaultAdvice !== undefined) {
       req.doctor.defaultAdvice = String(req.body.defaultAdvice).trim();
     }
+    if (req.body.defaultAdviceTr !== undefined) {
+      req.doctor.defaultAdviceTr = sanitizeTranslations(req.body.defaultAdviceTr);
+    }
     await req.doctor.save();
     res.json({ doctor: publicDoctor(req.doctor) });
   } catch (err) {
@@ -79,5 +83,7 @@ function publicDoctor(d) {
     picture: d.picture,
     clinicName: d.clinicName,
     defaultAdvice: d.defaultAdvice,
+    // Map -> plain object so the frontend can read translations by lang.
+    defaultAdviceTr: d.defaultAdviceTr ? Object.fromEntries(d.defaultAdviceTr) : {},
   };
 }
