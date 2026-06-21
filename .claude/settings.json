@@ -23,7 +23,11 @@
       "Bash(rm -f t.mjs t2.mjs t3.mjs t4.mjs server-like.html mr.pdf gu.pdf en.pdf ui-test.mjs ui-mr.png ui-gu.png)",
       "Bash(npm uninstall *)",
       "Bash(taskkill //F //IM node.exe)",
-      "Bash(node shot.mjs)"
+      "Bash(node shot.mjs)",
+      "Bash(node -e 'import\\(\"dotenv/config\"\\).then\\(\\(\\)=>console.log\\(\"GOOGLE_TRANSLATE_API_KEY set:\", !!process.env.GOOGLE_TRANSLATE_API_KEY, \"| length:\", \\(process.env.GOOGLE_TRANSLATE_API_KEY||\"\"\\).length\\)\\)')",
+      "Bash(node --check services/translationService.js)",
+      "Bash(node --check models/TranslationCache.js)",
+      "Bash(git stash *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\bhang\\.claude\\projects\\c--Users-bhang-Desktop-Diet-chart\\memory"
